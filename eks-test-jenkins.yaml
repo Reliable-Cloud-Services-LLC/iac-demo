@@ -1,0 +1,45 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: rcs-jenkins-eks
+  region: us-east-1
+
+vpc:
+  subnets:
+    private:
+      us-east-1a:
+        id: siham_one
+
+      us-east-1b:
+        id: siham_two
+
+nodeGroups:
+  - name: rcs-jenkins
+    instanceType: m5.xlarge
+    desiredCapacity: 1
+    privateNetworking: true
+  - name: rcs-jenkins-spot
+    minSize: 0
+    maxSize: 5
+    desiredCapacity: 0
+    privateNetworking: true
+    instancesDistribution:
+      instanceTypes: ["m5.large", "m5.xlarge", "m5.2xlarge"]
+      onDemandBaseCapacity: 0
+      onDemandPercentageAboveBaseCapacity: 0
+      spotInstancePools: 4
+    labels:
+      lifecycle: Ec2Spot
+      intent: apps
+    taints:
+      spotInstance: "true:PreferNoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/node-template/label/lifecycle: Ec2Spot
+      k8s.io/cluster-autoscaler/node-template/label/intent: apps
+      k8s.io/cluster-autoscaler/node-template/taint/spotInstance: "true:PreferNoSchedule"
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        albIngress: true
