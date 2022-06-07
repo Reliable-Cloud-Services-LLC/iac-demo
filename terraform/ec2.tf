@@ -6,13 +6,27 @@ key_name                    = "${var.key_name}"
 security_groups             = ["${aws_security_group.ssh-security-group.id}"]
 subnet_id                   = "${aws_subnet.public-subnet-1.id}"
 associate_public_ip_address = true
-#user_data                   = "${data.template_file.provision.rendered}"
+user_data = <<EOF
+#!/bin/bash
+sudo yum update 
+sudo yum install default-jdk -y
+amazon-linux-extras install epel 
+amazon-linux-extras install java-openjdk11  
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo --no-check-certificate
+sudo rpm --import http://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum install jenkins -y
+amazon-linux-extras install jenkins
+sudo service jenkins enable
+sudo service jenkins start
+EOF
+
+
 #iam_instance_profile = "${aws_iam_instance_profile.some_profile.id}"
 lifecycle {
 create_before_destroy = true
 }
 tags = {
-"Name" = "EC2-PUBLIC"
+"Name" = "EC2PUBLIC"
 }
 # Copies the ssh key file to home dir
 # Copies the ssh key file to home dir
@@ -52,6 +66,6 @@ lifecycle {
 create_before_destroy = true
 }
 tags = {
-"Name" = "EC2-Private"
+"Name" = "EC2Private"
 }
 }
