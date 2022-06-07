@@ -13,7 +13,7 @@ stages{
     }
     stage('Terraform init'){
         steps{
-        
+            sh  'cd eks'        
             sh 'terraform init'
         }
     }
@@ -21,6 +21,7 @@ stages{
     
     stage('Terraform plan'){
         steps{
+          sh 'cd eks'
            sh 'terraform plan'
        }
     }
