@@ -27,7 +27,8 @@ stages{
     }
      stage('Terraform apply'){
         steps{
-            sh 'terraform apply --auto-approve'
+             sh '''cd eks
+                terraform apply --auto-approve'''
         }
     } 
     
