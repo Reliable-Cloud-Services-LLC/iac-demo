@@ -31,6 +31,9 @@ stages{
                 terraform apply --auto-approve'''
         }
     } 
-    
+       stage('Terraform Destroy'){
+        sh '''cd /var/lib/jenkins/workspace/eks_cluster_pipeline/eks
+       terraform destroy'''
+    }
 }
 }
